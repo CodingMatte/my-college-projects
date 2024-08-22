@@ -2,8 +2,6 @@
 
 ## Bachelor in Applied Computer Science
 
-### Università degli Studi di Urbino
-
 This repository contains a collection of my projects developed during my Bachelor Degree in Applied Computer Science at the Università degli Studi di Urbino, where I began my studies in 2013.
 
 #### About
