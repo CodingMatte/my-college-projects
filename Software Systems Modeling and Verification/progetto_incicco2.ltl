@@ -1,0 +1,55 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Proprietà Progetto Matteo Incicco MAT. 261716 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%
+% Si verifica che non ci sia deadlock
+%
+PROPERTY deadloack_freedom IS
+	DEADLOCK_FREE;
+
+
+%
+% Si verifica che ci sia atomicità nella transazione:
+% se il cliente usufruisce delle informazioni allora il venditore
+% ha ricevuto il pagamento
+%
+PROPERTY atomicita_transazione_1 IS
+	ALL_FUTURE_STATES_SAT(C.usufruisco_informazioni -> SOME_PAST_STATE_SAT(V.pagamento_ricevuto));
+
+
+%
+% Si verifica che ci sia atomicità nella transazione:
+% se il cliente immette la firma nell'epo, la invia e la verifica da parte di netbill risulta
+% ok allora il cliente deve ricevere la chiave
+%
+PROPERTY atomicita_transazione_2 IS
+	ALL_FUTURE_STATES_SAT(C.immetto_firma /\ C.invio_epo /\ N.verifica_epo_ok -> SOME_FUTURE_STATE_SAT(C.ricevo_chiave));
+
+
+%
+% Si verifica la correttezza della transazione:
+% se il venditore non invia la chiave allora la verifica dell'EPO deve aver avuto esito negativo.
+% Di conseguenza la proprietà non è soddisfatta.
+%
+PROPERTY correttezza_transazione_verifica_1 IS
+	ALL_FUTURE_STATES_SAT(V.non_invio_k -> SOME_PAST_STATE_SAT(N.verifica_epo_ok));
+
+
+%
+% Si verifica la correttezza della transazione:
+% controprova della precedente proprietà
+% 
+PROPERTY corretteza_transazione_verifica_2 IS
+	ALL_FUTURE_STATES_SAT(V.non_invio_k -> SOME_PAST_STATE_SAT(N.verifica_epo_non_ok));
+
+%
+% Si vuole verificare la possibilità di loop infinito nella fase di contrattazione
+%
+PROPERTY loop_infinito_contrattazione IS
+	ALL_FUTURE_STATES_SAT((C.invio_offerta /\ C.offerta_non_accettata /\ C.preparo_richiesta) -> (V.attesa_di_richieste /\ V.non_accetto_offerta))
+
+
+
+	

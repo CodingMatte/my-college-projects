@@ -1,0 +1,21 @@
+﻿<Properties StartupItem="GiocoScaleSerpenti/GiocoScaleSerpenti.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="GiocoScaleSerpenti/Vittoria.cs">
+    <Files>
+      <File FileName="GiocoScaleSerpenti/Gioco.cs" Line="1" Column="1" />
+      <File FileName="GiocoScaleSerpenti/Mappa.cs" Line="1" Column="1" />
+      <File FileName="GiocoScaleSerpenti/Dado.cs" Line="1" Column="1" />
+      <File FileName="GiocoScaleSerpenti/Giocatore.cs" Line="1" Column="1" />
+      <File FileName="GiocoScaleSerpenti/Casella.cs" Line="1" Column="1" />
+      <File FileName="GiocoScaleSerpenti/Scala.cs" Line="1" Column="1" />
+      <File FileName="GiocoScaleSerpenti/Serpente.cs" Line="1" Column="1" />
+      <File FileName="GiocoScaleSerpenti/Vuota.cs" Line="1" Column="1" />
+      <File FileName="GiocoScaleSerpenti/Partenza.cs" Line="1" Column="1" />
+      <File FileName="GiocoScaleSerpenti/Vittoria.cs" Line="18" Column="2" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

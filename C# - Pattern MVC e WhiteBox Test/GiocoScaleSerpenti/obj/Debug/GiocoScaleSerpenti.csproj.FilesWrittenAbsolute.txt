@@ -1,0 +1,6 @@
+/home/leo/Scrivania/GiocoScaleSerpenti/GiocoScaleSerpenti/obj/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/leo/Scrivania/GiocoScaleSerpenti/GiocoScaleSerpenti/bin/Debug/GiocoScaleSerpenti.exe.config
+/home/leo/Scrivania/GiocoScaleSerpenti/GiocoScaleSerpenti/bin/Debug/GiocoScaleSerpenti.exe.mdb
+/home/leo/Scrivania/GiocoScaleSerpenti/GiocoScaleSerpenti/bin/Debug/GiocoScaleSerpenti.exe
+/home/leo/Scrivania/GiocoScaleSerpenti/GiocoScaleSerpenti/obj/Debug/GiocoScaleSerpenti.exe
+/home/leo/Scrivania/GiocoScaleSerpenti/GiocoScaleSerpenti/obj/Debug/GiocoScaleSerpenti.exe.mdb

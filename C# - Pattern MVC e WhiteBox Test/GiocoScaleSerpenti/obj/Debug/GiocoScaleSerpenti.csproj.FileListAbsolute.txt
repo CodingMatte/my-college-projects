@@ -1,0 +1,18 @@
+c:\users\francesco\documents\visual studio 2013\Projects\GiocoScaleSerpenti\GiocoScaleSerpenti\bin\Debug\GiocoScaleSerpenti.exe.config
+c:\users\francesco\documents\visual studio 2013\Projects\GiocoScaleSerpenti\GiocoScaleSerpenti\bin\Debug\GiocoScaleSerpenti.exe
+c:\users\francesco\documents\visual studio 2013\Projects\GiocoScaleSerpenti\GiocoScaleSerpenti\bin\Debug\GiocoScaleSerpenti.pdb
+c:\users\francesco\documents\visual studio 2013\Projects\GiocoScaleSerpenti\GiocoScaleSerpenti\obj\Debug\GiocoScaleSerpenti.csprojResolveAssemblyReference.cache
+c:\users\francesco\documents\visual studio 2013\Projects\GiocoScaleSerpenti\GiocoScaleSerpenti\obj\Debug\GiocoScaleSerpenti.exe
+c:\users\francesco\documents\visual studio 2013\Projects\GiocoScaleSerpenti\GiocoScaleSerpenti\obj\Debug\GiocoScaleSerpenti.pdb
+C:\Users\Matteo\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\bin\Debug\GiocoScaleSerpenti.exe.config
+C:\Users\Matteo\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\obj\Debug\GiocoScaleSerpenti.exe
+C:\Users\Matteo\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\obj\Debug\GiocoScaleSerpenti.pdb
+C:\Users\Matteo\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\bin\Debug\GiocoScaleSerpenti.exe
+C:\Users\Matteo\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\bin\Debug\GiocoScaleSerpenti.pdb
+C:\Users\Matteo\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\obj\Debug\GiocoScaleSerpenti.csprojResolveAssemblyReference.cache
+C:\Users\francesco\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\bin\Debug\GiocoScaleSerpenti.exe.config
+C:\Users\francesco\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\obj\Debug\GiocoScaleSerpenti.exe
+C:\Users\francesco\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\obj\Debug\GiocoScaleSerpenti.pdb
+C:\Users\francesco\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\bin\Debug\GiocoScaleSerpenti.exe
+C:\Users\francesco\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\bin\Debug\GiocoScaleSerpenti.pdb
+C:\Users\francesco\Desktop\GiocoScaleSerpenti\GiocoScaleSerpenti\obj\Debug\GiocoScaleSerpenti.csprojResolveAssemblyReference.cache

@@ -1,0 +1,416 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Progetto NetBill Matteo Incicco MAT. 261716 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ARCHI_TYPE NetBill(void)
+
+ARCHI_ELEM_TYPES
+
+
+	%
+	% Definisco il tipo cliente
+	%
+	ELEM_TYPE Cliente_Type(void)
+
+	    BEHAVIOR
+		
+
+		%
+		% Nella fase iniziale il cliente dovrà entrare nel sistema
+		% immettendo le credenziali. C'è la possibilità che il cliente
+		% sbagli e di conseguenza deve riprovare ad accedere.
+		%
+		CreazioneCliente (void; void) =
+		<immetto_user, _> . <immetto_password, _> .
+		choice
+		{
+			<credenziali_corrette, _> . TrovaInformazioni (),
+			<credenziali_non_corrette, _> . CreazioneCliente ()
+		};
+
+
+		%
+		% Il cliente si mette alla ricerca di beni immateriali/informazioni, 
+		% se non li trova ripete la ricerca altrimenti sceglie se chiedere 
+		% il prezzo al venditore oppure effettuare direttamente una proposta.
+		%
+		TrovaInformazioni (void; void) =
+		<cerco_informazioni, _> .
+		choice
+		{
+			<informazioni_non_trovate, _> . TrovaInformazioni (),
+			<informazioni_trovate, _> . 
+			choice
+			{
+				<chiedo_prezzo, _> . RichiestaPrezzo(),
+				<elaboro_proposta, _> . InvioRichiesta()
+			}
+		};
+
+		
+		%
+		% Se il cliente sceglie di richiedere il prezzo al venditore allora 
+		% gli invierà le sue informazioni con la richiesta di prezzo
+		% e si metterà in attesa di riceverlo.
+		% Una volta ricevuto può: rifiutarlo, accettarlo, oppure preparare
+		% una sua controproposta.
+		%
+		RichiestaPrezzo(void; void) = 
+		<invio_ID_info, _> . <invio_informazioni, _> . <richiedo_prezzo, _> .
+		<attendo_prezzo, _> .
+		choice
+		{
+			<accetto_prezzo, _> . ChiedoTransazione(),
+			<rifiuto_prezzo, _> . TrovaInformazioni(),
+			<preparo_controproposta, _> . InvioRichiesta()
+		};
+
+
+		%
+		% Se il cliente, invece, sceglie di inviare una proposta, invierà
+		% le sue informazioni con la relativa offerta e si metterà in attesa
+		% di una risposta negativa o positiva. In entrambi i casi il cliente 
+		% potrà scegliere di annullare la transazione. Nel caso in cui il 
+		% venditore accettase l'offerta, ed anche il cliente di conseguenza,
+		% quest'ultimo chiederà la transazione al venditore.
+		% In questa fase è stato implementato anche il possibile arrivo
+		% di un timeout da parte del venditore.
+		%
+		InvioRichiesta (void; void) = 
+		<invio_ID_info, _> . <invio_informazioni, _> . <invio_offerta, _> .
+		choice
+		{
+			<offerta_non_accettata, _> .
+			choice
+			{
+				<annullo_richiesta, _> . TrovaInformazioni(),
+				<preparo_richiesta, _> . InvioRichiesta ()
+			},
+			<offerta_accettata, _> .
+			choice
+			{
+				<non_confermo_offerta, _> . TrovaInformazioni(),
+				<confermo_offerta, _> . ChiedoTransazione()
+			},
+			<ricevo_timeout, _> . TrovaInformazioni()
+		};
+
+
+		% 
+		% In questa fase il cliente chiede la transazione del bene/informazione
+		% criptata.
+		% Se il venditore accetta, il cliente potrà di nuovo scegliere se abbandonare
+		% o continuare la transazione inviando l'EPO.
+		%
+		ChiedoTransazione (void; void) =
+		<chiedo_transazione_info_k, _> .
+		choice
+		{
+			<ricevo_info_k, _> .
+			choice
+			{
+				<accetto_transazione, _> . InvioEPO (),
+				<annullo_transazione, _>. TrovaInformazioni ()
+			},
+			<non_ricevo_info_k, _> . TrovaInformazioni ()
+
+		};
+
+
+		%
+		% Il cliente immette la firma nell'EPO e lo invia al venditore
+		% mettendosi, di conseguenza, in attesa di ricevere la chiave.
+		%
+		InvioEPO (void; void) =
+		<immetto_firma, _> . <invio_epo, _> . RicevoChiave();
+
+
+		%
+		% Il cliente potrà ricevere la chiave nel caso in cui la verifica
+		% del pagamento (da parte del server NetBill) sia andata a buon fine
+		% oppure non riceverla in caso contrario.
+		%
+		RicevoChiave (void; void) = 
+		choice
+		{
+			<ricevo_chiave, _> . <decifro_informazioni, _ > . <usufruisco_informazioni, _> . TrovaInformazioni (),
+			<non_ricevo_chiave, _> . TrovaInformazioni()
+		}
+
+		
+		INPUT_INTERACTIONS 
+
+			UNI attendo_prezzo;
+			       offerta_non_accettata;
+			       offerta_accettata;
+			       ricevo_timeout;
+			       ricevo_info_k;
+			       non_ricevo_info_k;
+			       ricevo_chiave;
+			       non_ricevo_chiave
+
+	
+		OUTPUT_INTERACTIONS 
+
+			UNI richiedo_prezzo;
+			       accetto_prezzo;
+			       rifiuto_prezzo;
+			       preparo_controproposta;
+			       invio_offerta;
+			       non_confermo_offerta;
+			       chiedo_transazione_info_k;
+			       accetto_transazione;
+			       annullo_transazione;
+			       invio_epo
+	
+		
+	%
+	% Definisco il tipo venditore
+	% 
+	ELEM_TYPE Venditore_Type(void)
+
+	    BEHAVIOR		
+		
+		
+		%
+		% Il venditore nella fase inziale rimarrà in attesa di 
+		% due tipi di input: il primo nel caso in cui il cliente
+		% interessato al suo bene/informazione gli effettui una
+		% proposta; il secondo nel caso in cui il cliente interessato
+		% al suo bene/informazione gli chieda il relativo prezzo.
+		%
+		AttesaRichieste (void; void) = 
+		choice
+		{
+			<attesa_di_proposte, _> . ValutoOfferta(),
+			<attesa_di_richieste,_> . InviaPrezzoInfo()
+		};
+		
+
+		%
+		% Nel caso in cui il cliente gli effettui una proposta il 
+		% venditore potrà rifiutarla o accettarla. In questa fase è stato
+		% anche implementato un timeout: il venditore potrà inviarlo al 
+		% cliente.
+		%
+		ValutoOfferta (void; void) =
+		choice
+		{
+			<accetto_offerta, _> . AttesaRichiestaTransazione (),
+			<non_accetto_offerta, _> . AttesaRichieste (),
+			<invio_timeout, _> . AttesaRichieste ()
+		};
+		
+
+		%
+		% Nel caso in cui il cliente gli chieda il prezzo, il venditore
+		% glielo invierà e rimarrà in attesa di una risposta.
+		% Se il cliente avvisa che invierà una controposta si metterà in  
+		% attesa di riceverla.
+		%
+		InviaPrezzoInfo(void; void) =
+		<invio_prezzo_info, _> .
+		choice
+		{
+			<prezzo_accettato, _> . AttesaRichiestaTransazione (),
+			<prezzo_rifiutato, _> . AttesaRichieste (),
+			<rifiuta_prepara_controproposta, _> . AttesaRichieste ()
+		};
+
+
+		%
+		% Se il cliente accetta il prezzo allora il venditore si metterà
+		% in attesa di richieste di transazione.
+		% Se il cliente non richiede la transazione allora si rimetterà
+		% in attesa di nuove richieste.
+		% Se il cliente richiede la transazione allora il venditore 
+		% valuterà di nuovo se accettare o rifiutare la richiesta della 
+		% trasanzione del bene/info in chiave k.
+		%
+		AttesaRichiestaTransazione (void; void) =
+		choice
+		{
+			<richiesta_transazione_rifiutata, _> . AttesaRichieste (),
+			<richiesta_transazione_info_k, _> .
+			choice
+			{
+			 	<accetto_richiesta_info_k, _> . InvioInfo (),
+				<rifiuto_richiesta_info_k, _> . AttesaRichieste ()
+			}
+		};
+
+
+		% 
+		% Se entrambi accettano allora il venditore invia le informazioni
+		% criptate in chiave k e si metterà in attesa della conferma decisiva
+		% da parte del cliente.
+		% Se quest'utlimo accetta la transazione allora il venditore si 
+		% metterà in attesa della ricezione dell'EPO.
+		%
+		InvioInfo (void; void) =
+		<invio_info_k, _> . 
+		choice
+		{
+			<transazione_accettata, _> . AttesaEPO (),
+			<transazione_annullata, _> . AttesaRichieste ()
+		};
+		
+		
+		%
+		% Il venditore rimane in attesa dell'EPO del cliente e, una volta
+		% ricevuto chiamerà in causa NetBill per la sua verifica.
+		%
+		AttesaEPO (void; void) = 
+		<attesa_epo_c, _> . VerificaEPONetBill ();
+			
+			
+		%
+		% Quindi, il venditore, invierà a NetBill l'EPO e rimarrà in attesa
+		% di un esito.
+		% Se quest'ultimo sarà positivo allora invierà la chiave al cliente per 
+		% decriptare il bene e si metterà in attesa di nuove richieste, altrimenti 
+		% non invia la chiave e avvisa il cliente che il pagamento non è 
+		% stato accettato e si metterà, anche in questo caso, in attesa di nuove 
+		% richieste.
+		%
+		VerificaEPONetBill (void; void) = 
+		<invio_epo_k_NetBill, _> .
+		choice
+		{
+			<pagamento_ricevuto, _> . <invio_k, _> . AttesaRichieste (),
+			<pagamento_rifiutato, _> . <non_invio_k, _> . AttesaRichieste ()
+		}
+
+
+
+		INPUT_INTERACTIONS 
+
+			UNI prezzo_accettato;
+			       prezzo_rifiutato;
+			       rifiuta_prepara_controproposta;
+			       attesa_di_proposte;
+			       attesa_di_richieste;
+			       richiesta_transazione_rifiutata;
+			       richiesta_transazione_info_k;
+			       transazione_accettata;
+			       transazione_annullata;
+			       attesa_epo_c;
+			       pagamento_ricevuto;
+			       pagamento_rifiutato
+
+		
+		OUTPUT_INTERACTIONS 
+
+			UNI invio_prezzo_info;
+			       accetto_offerta;
+			       non_accetto_offerta;
+			       invio_timeout;
+			       invio_info_k;
+			       rifiuto_richiesta_info_k;
+			       invio_epo_k_NetBill;
+			       invio_k;
+			       non_invio_k
+
+
+	%
+	% Definisco il tipo NetBill
+	%
+	ELEM_TYPE NetBill_Type (void)
+
+	    BEHAVIOR
+		
+		
+		%
+		% NetBill rimane in attesa di ricevere EPO.
+		% Quando lo riceve chiamerà il server per la verifica.
+		%
+		NetBill (void; void) =
+		<attesa_epo, _> . VerificaServerNetBill ();
+
+
+		%
+		% Il server verificherà l'autenticità della firma dell'EPO,
+		% i privilegi dell'utente, l'account del cliente, l'unicità
+		% e l'originalità dell'EPOID.
+		% Se tutte le verifiche sono andate a buon fine invierà al cliente 
+		% la notifica di ricevuto pagamento/verifica andata a buon fine.
+		% In caso contrario invierà la notifica dell'esito negativo.
+		% In entrambi i casi NetBill tornerà in attesa di ricezione di 
+		% EPO.
+		%
+		VerificaServerNetBill (void; void) =
+		<ver_firma_epo, _> . <ver_privilegi_utente, _> . <ver_acc_cliente, _> . 
+		<ver_unic_e_originalit_epoid, _> .
+		choice
+		{
+			<verifica_epo_ok, _> . NetBill (),
+			<verifica_epo_non_ok, _> . NetBill ()
+		}
+
+
+		INPUT_INTERACTIONS 
+
+			UNI attesa_epo
+
+		OUTPUT_INTERACTIONS 
+
+			UNI verifica_epo_ok;
+			   verifica_epo_non_ok
+
+
+ARCHI_TOPOLOGY
+
+		ARCHI_ELEM_INSTANCES
+
+		C : Cliente_Type();
+		V : Venditore_Type();
+		N : NetBill_Type()
+
+		ARCHI_INTERACTIONS
+		
+		void
+
+		ARCHI_ATTACHMENTS
+		FROM C.richiedo_prezzo TO V.attesa_di_richieste;
+		
+		FROM V.invio_prezzo_info TO C.attendo_prezzo;
+
+		FROM C.accetto_prezzo TO V.prezzo_accettato;
+		
+		FROM C.rifiuto_prezzo TO V.prezzo_rifiutato;
+
+		FROM C.preparo_controproposta TO V.rifiuta_prepara_controproposta;
+
+		FROM C.invio_offerta TO V.attesa_di_proposte;
+
+		FROM V.accetto_offerta TO C.offerta_accettata;
+
+		FROM V.non_accetto_offerta TO C.offerta_non_accettata;
+		
+		FROM V.invio_timeout TO C.ricevo_timeout;	
+		
+		FROM C.non_confermo_offerta TO V.richiesta_transazione_rifiutata;
+		
+		FROM C.chiedo_transazione_info_k TO V.richiesta_transazione_info_k;
+
+		FROM V.invio_info_k TO C.ricevo_info_k;
+		
+		FROM V.rifiuto_richiesta_info_k TO C.non_ricevo_info_k;
+
+		FROM C.accetto_transazione TO V.transazione_accettata;
+		
+		FROM C.annullo_transazione TO V.transazione_annullata;
+	
+		FROM C.invio_epo TO V.attesa_epo_c;
+
+		FROM V.invio_epo_k_NetBill TO N.attesa_epo;
+
+		FROM N.verifica_epo_ok TO V.pagamento_ricevuto;
+		
+		FROM N.verifica_epo_non_ok TO V.pagamento_rifiutato;
+
+		FROM V.invio_k TO C.ricevo_chiave;
+	
+		FROM V.non_invio_k TO C.non_ricevo_chiave
+
+END
